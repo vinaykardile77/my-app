@@ -3,19 +3,18 @@ import UserFilters from "./userFilters";
 import Pagination from "./userPaging";
 
 function UserList(props) {
+  const pageSize = 2;
+  const [currentPage, setCurrentPage] = useState(1);
   const [Users, setUsers] = useState([]);
-  const currentpage = 1;
-  const pagesize = 1;
-  const handlePageClick = (pageid) => {
-    alert(pageid);
-  };
   const [Filters, setFilters] = useState({
     Search: "",
     Department: "",
     Sex: ""
   });
-
   const [SortOrder, setSortOrder] = useState({ SortBy: "Name", Order: "Asc" });
+  const handlePageClick = useCallback((pageid) => {
+    setCurrentPage(pageid);
+  }, currentPage);
 
   const HandleFilters = useCallback(
     (event) => {
@@ -23,6 +22,7 @@ function UserList(props) {
         ...prevState,
         [event.target.name]: event.target.value
       }));
+      setCurrentPage(1);
     },
     [Filters]
   );
@@ -137,8 +137,8 @@ function UserList(props) {
   const PrintBody = (props) => {
     return (
       <tbody>
-        {Users.length > 0 ? (
-          Users.map((user) => (
+        {props.Users.length > 0 ? (
+          props.Users.map((user) => (
             <PrintUser
               key={user.ID}
               user={user}
@@ -176,9 +176,12 @@ function UserList(props) {
       </tr>
     );
   };
-
-  const currentUsers = Users.slice(currentpage, pagesize);
-  console.log(Users);
+  const start = currentPage * pageSize - pageSize;
+  const end =
+    props.Users.length > currentPage * pageSize
+      ? currentPage * pageSize
+      : props.Users.length;
+  const currentUsers = Users.slice(start, end);
   return (
     <>
       {props.Users.length > 0 && (
@@ -196,8 +199,8 @@ function UserList(props) {
       </div>
       {props.Users.length > 0 && (
         <Pagination
-          currentpage={currentpage}
-          pagesize={pagesize}
+          currentpage={currentPage}
+          pagesize={pageSize}
           totalrecords={Users.length}
           handlePageClick={handlePageClick}
         />

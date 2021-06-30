@@ -1,12 +1,13 @@
 import React from "react";
 
-export default function Pagination(props) {
+function Pagination(props) {
+  console.log("Pagination");
   const totalPages = Math.round(props.totalrecords / props.pagesize);
   const pageNumbers = [];
   for (var i = 1; i <= totalPages; i++) pageNumbers.push(i);
   const data = pageNumbers.map((item) => {
     return (
-      <li onClick={() => props.handlePageClick(item)} key={item}>
+      <li key={item} onClick={() => props.handlePageClick(item)}>
         {item}
       </li>
     );
@@ -18,3 +19,4 @@ export default function Pagination(props) {
     </div>
   );
 }
+export default React.memo(Pagination);
